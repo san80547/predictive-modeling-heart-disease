@@ -10,6 +10,7 @@ data preprocessing, model development, and performance evaluation.
 - Target variable: `target`
   - `0` = No Heart Disease
   - `1` = Heart Disease
+<img width="973" height="577" alt="image" src="https://github.com/user-attachments/assets/a39ec92b-3826-4e78-acf5-8b48d2fe1101" />
 
 ## Workflow (CRISP-DM)
 1. **Data Understanding**: EDA (distributions, correlations, outliers, bivariate analysis)
