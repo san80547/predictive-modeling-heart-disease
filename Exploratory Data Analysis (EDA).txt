@@ -1,0 +1,153 @@
+Exploratory Data Analysis (EDA)
+1. Distribution of the Target Variable (Heart Disease Status)
+install.packages("ggplot2")
+library(ggplot2)
+"C:/Users/asus/Downloads/heart.csv"
+
+data <- data.frame(
+  Class = c("No Heart Disease (0)", "Heart Disease (1)"),
+  Count = c(160, 145)
+)
+ggplot(data, aes(x = Class, y = Count)) +
+  geom_bar(stat = "identity", fill = "#D49712") +
+  labs(
+    title = "Heart Disease vs No Heart Disease",
+    subtitle = "Binary Target (0 = No Heart Disease, 1 = Heart Disease)",
+    x = "Class",
+    y = "Count"
+  ) 
+
+2. Binary Class Distribution of Heart Disease
+install.packages("ggplot2")
+install.packages("gridExtra")
+library(ggplot2)
+library(gridExtra)
+"C:/Users/asus/Downloads/heart.csv"
+p1 <- ggplot(heart, aes(x = age)) +
+  geom_histogram(bins = 20, fill = "orange", color = "black") +
+  theme_minimal() +
+  labs(title = "age", x = "age", y = "Count")
+p2 <- ggplot(heart, aes(x = trestbps)) +
+  geom_histogram(bins = 20, fill = "orange", color = "black") +
+  theme_minimal() +
+  labs(title = "trestbps", x = "trestbps", y = "Count")
+p3 <- ggplot(heart, aes(x = chol)) +
+  geom_histogram(bins = 20, fill = "orange", color = "black") +
+  theme_minimal() +
+  labs(title = "chol", x = "chol", y = "Count")
+p4 <- ggplot(heart, aes(x = thalach)) +
+  geom_histogram(bins = 20, fill = "orange", color = "black") +
+  theme_minimal() +
+  labs(title = "thalach", x = "thalach", y = "Count")
+p5 <- ggplot(heart, aes(x = oldpeak)) +
+  geom_histogram(bins = 20, fill = "orange", color = "black") +
+  theme_minimal() 
+  labs(title = "oldpeak", x = "oldpeak", y = "Count")
+grid.arrange(p1, p2, p3, p4, p5, ncol = 3)
+
+
+
+3. Correlation Heatmap of Clinical Features
+# install.packages("ggplot2")
+library(ggplot2)
+
+# Load your dataset
+heart <- read.csv("heart.csv")
+
+# Select numeric columns only
+num_data <- heart[sapply(heart, is.numeric)]
+
+# Compute correlation matrix
+corr_matrix <- cor(num_data, use = "complete.obs")
+
+# Convert matrix to data frame manually (base R)
+corr_df <- as.data.frame(as.table(corr_matrix))
+names(corr_df) <- c("Var1", "Var2", "value")
+
+# Plot heatmap
+ggplot(corr_df, aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile() +
+  scale_fill_gradient2(
+    low = "#0d0d20",
+    mid = "#40002f",
+    high = "#ffebcd",
+    midpoint = 0,
+    name = "Correlation"
+  ) 
+
+ 
+4.Boxplots for Outlier Detection 
+# install.packages("ggplot2")
+
+library(ggplot2)
+
+# Load your dataset
+heart <- read.csv("heart.csv")
+
+# Select numeric variables used in boxplots
+box_vars <- c("age", "trestbps", "chol", "thalach", "oldpeak")
+
+# Convert to long format using base R (NO extra packages!)
+heart_long <- data.frame(
+  variable = rep(box_vars, each = nrow(heart)),
+  value = unlist(heart[box_vars])
+)
+
+# Plot boxplots
+ggplot(heart_long, aes(x = variable, y = value)) +
+  geom_boxplot(fill = "orange", color = "black", outlier.color = "black") +
+  theme_minimal() +
+  labs(title = "Boxplots for Outlier Detection", x = "", y = "") +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.text.x = element_text(angle = 0, hjust = 0.5)
+  )
+
+
+5.:  Bivariate Analysis with Target                         
+# Install packages if needed
+ install.packages(c("ggplot2", "gridExtra"))
+
+library(ggplot2)
+library(gridExtra)
+
+# PLOT 1 — Chest Pain Type (cp)
+p1 <- ggplot(heart, aes(x = cp, fill = factor(condition))) +
+  geom_bar(position = "dodge") +
+  labs(title = "Chest Pain Type", x = "cp", fill = "condition") +
+  theme_minimal()
+
+# PLOT 2 — Max Heart Rate (thalach) Scatter
+p2 <- ggplot(heart, aes(x = thalach, y = age, color = factor(condition))) +
+  geom_point() +
+  labs(title = "Max Heart Rate (thalach)", x = "Max Heart Rate (thalach)", y = "") +
+  theme_minimal()
+
+# PLOT 3 — Exercise-Induced Angina (exang)
+p3 <- ggplot(heart, aes(x = factor(exang), fill = factor(condition))) +
+  geom_bar(position = "stack") +
+  labs(title = "Exercise-Induced Angina", x = "Tergent Disease", fill = "condition") +
+  theme_minimal()
+
+# PLOT 4 — ST Depression (oldpeak) Scatter
+p4 <- ggplot(heart, aes(x = oldpeak, y = thalach, color = factor(condition))) +
+  geom_point() +
+  labs(title = "ST Deppression (oldpeak)", x = "Oldpeak", y = "") +
+  theme_minimal()
+
+# PLOT 5 — Oldpeak Histogram
+p5 <- ggplot(heart, aes(x = oldpeak)) +
+  geom_histogram(fill = "goldenrod1", color = "black", bins = 20) +
+  labs(title = "oldpeak", x = "oldpeak", y = "Count") +
+  theme_minimal()
+
+# PLOT 6 — Age Scatter by Condition
+p6 <- ggplot(heart, aes(x = age, y = thalach, color = factor(condition))) +
+  geom_point() +
+  labs(title = "Age", x = "Age", y = "") +
+  theme_minimal()
+
+# Combine all 6 plots into a 3x2 layout
+grid.arrange(p1, p2, p3, p4, p5, p6, ncol = 3)
+
+

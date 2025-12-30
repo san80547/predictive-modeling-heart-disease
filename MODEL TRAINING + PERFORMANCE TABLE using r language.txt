@@ -1,0 +1,199 @@
+ MODEL TRAINING + PERFORMANCE TABLE
+
+# Install packages if needed
+
+# install.packages("caret")
+
+# install.packages("pROC")
+
+# install.packages("e1071")
+
+# install.packages("randomForest")
+
+
+
+library(caret)
+
+library(pROC)
+
+library(e1071)
+
+library(randomForest)
+
+
+
+# -------------------------
+
+# Load your dataset
+
+# -------------------------
+
+df <- read.csv("C:/Users/asus/Downloads/heart.csv")
+
+df$condition <- factor(df$condition)
+
+
+
+# -------------------------
+
+# TrainControl
+
+# -------------------------
+
+ctrl <- trainControl(
+  
+  method = "cv", 
+  
+  number = 5,
+  
+  classProbs = TRUE,
+  
+  summaryFunction = twoClassSummary,
+  
+  savePredictions = TRUE
+  
+)
+
+
+
+# caret requires levels: "yes", "no"
+
+levels(df$condition) <- c("No", "Yes")
+
+
+
+# -------------------------
+
+# Logistic Regression
+
+# -------------------------
+
+set.seed(123)
+
+log_model <- train(
+  
+  condition ~ ., data = df,
+  
+  method = "glm",
+  
+  trControl = ctrl,
+  
+  metric = "ROC"
+  
+)
+
+
+
+# -------------------------
+
+# Random Forest
+
+# -------------------------
+
+set.seed(123)
+
+rf_model <- train(
+  
+  condition ~ ., data = df,
+  
+  method = "rf",
+  
+  trControl = ctrl,
+  
+  metric = "ROC"
+  
+)
+
+
+
+# -------------------------
+
+# SVM
+
+# -------------------------
+
+set.seed(123)
+
+svm_model <- train(
+  
+  condition ~ ., data = df,
+  
+  method = "svmRadial",
+  
+  trControl = ctrl,
+  
+  metric = "ROC"
+  
+)
+
+
+
+# -------------------------
+
+# Extract metrics function
+
+# -------------------------
+
+get_metrics <- function(model) {
+  
+  preds <- model$pred
+  
+  preds <- preds[order(preds$rowIndex), ] # fix caret ordering
+  
+  
+  
+  actual <- preds$obs
+  
+  pred_class <- preds$pred
+  
+  prob_yes <- preds$Yes
+  
+  
+  
+  cm <- confusionMatrix(pred_class, actual, positive = "Yes")
+  
+  
+  
+  acc <- cm$overall["Accuracy"]
+  
+  prec <- cm$byClass["Precision"]
+  
+  rec <- cm$byClass["Recall"]
+  
+  f1  <- cm$byClass["F1"]
+  
+  aucv <- auc(actual, prob_yes)
+  
+  
+  
+  return(c(Acc=acc, Prec=prec, Rec=rec, F1=f1, AUC=aucv))
+  
+}
+
+
+
+# -------------------------
+
+# Compute performance table
+
+# -------------------------
+
+performance_table <- data.frame(
+  
+  Model = c("Logistic Reg.", "Random Forest", "SVM"),
+  
+  rbind(
+    
+    get_metrics(log_model),
+    
+    get_metrics(rf_model),
+    
+    get_metrics(svm_model)
+    
+  )
+  
+)
+
+
+
+print(performance_table)
