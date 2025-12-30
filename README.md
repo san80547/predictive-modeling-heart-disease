@@ -45,11 +45,14 @@ Models were compared using multiple metrics. Special attention is given to **fal
 
 ## How to Run
 1. Put `heart.csv` inside `data/`
-2. Run scripts in order:
-   - `scripts/01_eda.R`
-   - `scripts/02_preprocessing.R`
-   - `scripts/03_modeling.R`
-   - `scripts/04_evaluation.R`
+Run
+Exploratory Data Analysis (EDA).txt
+
+MODEL TRAINING + PERFORMANCE TABLE ...
+
+Confusion Matrix Analysis for Random Forest ...
+
+README.md
 
 ## Author
 Sandeep (Ulster University)
